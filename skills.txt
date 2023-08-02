@@ -1,0 +1,13 @@
+Python
+Java
+C++
+HTML
+CSS
+JavaScript
+Django
+SQL
+PostgreSQL
+Git
+GitHub
+test-driven development
+continuous integration

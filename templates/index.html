@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Welcome to Resume Parser</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      background: linear-gradient(to right, #faaca8, #d4e0c6);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    h1, h2, h3 {
+      color: #000000;
+    }
+
+    p, li {
+      color: #000000;
+    }
+
+    #resumeForm {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 1em;
+      margin: 1em;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+      width: 300px;
+    }
+
+    #resumeForm input, #resumeForm button {
+      margin-top: 1em;
+    }
+
+    #parsedInfo {
+      display: none;
+      padding: 2em;
+      margin: 1em;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    }
+
+    button {
+      background: rgba(76, 175, 80, 0.4); /* Green with opacity 0.4 */
+      border: none;
+      color: black; /* Black font color */
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin: 4px 2px;
+      cursor: pointer;
+      border-radius: 20px; /* Rounded edges */
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Resume Parser</h1>
+  <p>Please upload your resume.</p>
+
+  <form id="resumeForm" action="/parse_resume" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" accept=".txt,.pdf,.doc,.docx">
+    <button type="submit">Upload</button>
+  </form>
+
+  <div id="parsedInfo">
+    <h2>Parsed Information</h2>
+    <p id="name"></p>
+    <p id="email"></p>
+    <h3>Skills:</h3>
+    <ul id="skills"></ul>
+  </div>
+
+  <script type="text/javascript">
+    function processResume(event) {
+      event.preventDefault(); // Prevent form submission
+
+      const form = document.getElementById("resumeForm");
+      const formData = new FormData(form);
+      
+      fetch("/parse_resume", {
+        method: "POST",
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        // Update the parsed information in the HTML elements
+        document.getElementById("name").textContent = "Name: " + data['Name'];
+        document.getElementById("email").textContent = "Email: " + data['Email'];
+  
+        // Generate the skills list
+        const skillsList = document.getElementById("skills");
+        skillsList.innerHTML = ""; // Reset the list
+
+        data['skills'].forEach(skill => {
+          const listItem = document.createElement("li");
+          listItem.textContent = skill;
+          skillsList.appendChild(listItem);
+        });
+  
+        // Show the parsed information div
+        document.getElementById("parsedInfo").style.display = "block";
+      })
+      .catch(error => {
+        console.error("Error:", error);
+      });
+    }
+
+    // Add an event listener to call the processResume function on form submission
+    document.getElementById("resumeForm").addEventListener("submit", processResume);
+  </script>
+</body>
+</html>
